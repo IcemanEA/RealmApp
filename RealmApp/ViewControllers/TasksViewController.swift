@@ -11,11 +11,14 @@ import RealmSwift
 
 class TasksViewController: UITableViewController {
     
+    // MARK: - public properties
     var taskList: TaskList!
     
+    // MARK: - private properties
     private var currentTasks: Results<Task>!
     private var completedTasks: Results<Task>!
 
+    // MARK: - override methods
     override func viewDidLoad() {
         super.viewDidLoad()
         title = taskList.name
@@ -26,8 +29,7 @@ class TasksViewController: UITableViewController {
             action: #selector(addButtonPressed)
         )
         navigationItem.rightBarButtonItems = [addButton, editButtonItem]
-        currentTasks = taskList.tasks.filter("isComplete = false")
-        completedTasks = taskList.tasks.filter("isComplete = true")
+        updateTasksLists()
     }
     
     // MARK: - Table view data source
@@ -65,11 +67,11 @@ class TasksViewController: UITableViewController {
         if indexPath.section == 0 {
             task = currentTasks[indexPath.row]
             
-            let doneAction = UIContextualAction(style: .normal, title: "Done") { _, _, isDone in
+            let doneAction = UIContextualAction(style: .normal, title: "Done") { [unowned self]  _, _, isDone in
                 StorageManager.shared.done(task)
                 
                 tableView.moveRow(at: indexPath, to: IndexPath(row: 0, section: 1))
-                
+                updateTasksLists()
                 isDone(true)
             }
             doneAction.backgroundColor = #colorLiteral(red: 0.3411764801, green: 0.6235294342, blue: 0.1686274558, alpha: 1)
@@ -79,8 +81,9 @@ class TasksViewController: UITableViewController {
             
             let unDoneAction = UIContextualAction(style: .normal, title: "UnDone") { [unowned self] _, _, isDone in
                 StorageManager.shared.unDone(task)
-                tableView.moveRow(at: indexPath, to: IndexPath(row: currentTasks.count - 1, section: 0))
                 
+                tableView.moveRow(at: indexPath, to: IndexPath(row: currentTasks.count - 1, section: 0))
+                updateTasksLists()
                 isDone(true)
             }
             actions.append(unDoneAction)
@@ -104,10 +107,18 @@ class TasksViewController: UITableViewController {
         return UISwipeActionsConfiguration(actions: actions)
     }
     
-    
-    
+    // MARK: - Private methods
     @objc private func addButtonPressed() {
         showAlert()
+    }
+    
+    private func updateTasksLists() {
+        currentTasks = taskList.tasks
+            .filter("isComplete = false")
+            .sorted(byKeyPath: "date", ascending: true)
+        completedTasks = taskList.tasks
+            .filter("isComplete = true")
+            .sorted(byKeyPath: "date", ascending: false)
     }
 
 }

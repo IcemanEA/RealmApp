@@ -61,7 +61,7 @@ class StorageManager {
     func update(_ task: Task, newName name: String, andNote note: String, completion: (Task) -> Void) {
         write {
             task.name = name
-            task.note = note            
+            task.note = note
             completion(task)
         }
     }
@@ -75,12 +75,14 @@ class StorageManager {
     func done(_ task: Task) {
         write {
             task.setValue(true, forKey: "isComplete")
+            task.setValue(Date.now, forKey: "date")
         }
     }
     
     func unDone(_ task: Task) {
         write {
             task.setValue(false, forKey: "isComplete")
+            task.setValue(Date.now, forKey: "date")
         }
     }
     
