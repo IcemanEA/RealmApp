@@ -13,6 +13,7 @@ class TaskListViewController: UITableViewController {
 
     var taskLists: Results<TaskList>!
     
+    // MARK: - Override methods
     override func viewDidLoad() {
         super.viewDidLoad()
         let addButton = UIBarButtonItem(
@@ -103,6 +104,7 @@ class TaskListViewController: UITableViewController {
         tasksVC.taskList = taskList
     }
 
+    // MARK: - Private methods
     @objc private func addButtonPressed() {
         showAlert()
     }
@@ -114,6 +116,7 @@ class TaskListViewController: UITableViewController {
     }
 }
 
+// MARK: - Alert methods
 extension TaskListViewController {
     
     private func showAlert(with taskList: TaskList? = nil, completion: (() -> Void)? = nil) {
@@ -125,14 +128,14 @@ extension TaskListViewController {
                 StorageManager.shared.edit(taskList, newValue: newValue)
                 completion()
             } else {
-                self?.save(taskList: newValue)
+                self?.insert(taskList: newValue)
             }
         }
         
         present(alert, animated: true)
     }
     
-    private func save(taskList: String) {
+    private func insert(taskList: String) {
         StorageManager.shared.update(taskList) { taskList in
             let rowIndex = IndexPath(row: taskLists.index(of: taskList) ?? 0, section: 0)
             tableView.insertRows(at: [rowIndex], with: .automatic)
