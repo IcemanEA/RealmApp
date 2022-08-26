@@ -40,7 +40,7 @@ class DataManager {
             shoppingList.tasks.insert(contentsOf: [bread, apples], at: 1)
             
             DispatchQueue.main.async {
-                StorageManager.shared.save([shoppingList, moviesList])
+                StorageManager.shared.insert([shoppingList, moviesList])
                 UserDefaults.standard.set(true, forKey: "done")
                 completion()
             }
