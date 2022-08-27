@@ -80,7 +80,7 @@ class TasksViewController: UITableViewController {
             task = completedTasks[indexPath.row]
             
             let unDoneAction = UIContextualAction(style: .normal, title: "UnDone") { [unowned self] _, _, isDone in
-                StorageManager.shared.unDone(task)
+                StorageManager.shared.done(task)
                 
                 tableView.moveRow(at: indexPath, to: IndexPath(row: currentTasks.count - 1, section: 0))
                 updateTasksLists()
@@ -142,9 +142,8 @@ extension TasksViewController {
     }
 
     private func update(_ task: Task, newName name: String, andNote note: String, completion: () -> Void)  {
-        StorageManager.shared.update(task, newName: name, andNote: note) { _ in
-            completion()
-        }
+        StorageManager.shared.update(task, newName: name, andNote: note)
+        completion()
     }
     
     private func insert(task: String, withNote note: String) {

@@ -45,7 +45,7 @@ class StorageManager {
 
     func done(_ taskList: TaskList) {
         write {
-            taskList.tasks.setValue(true, forKey: "isComplete")
+            taskList.tasks.setValue(true, forKey: "isComplete") // применяет значение ко всем элементам внутри массива
         }
     }
 
@@ -58,11 +58,10 @@ class StorageManager {
         }
     }
     
-    func update(_ task: Task, newName name: String, andNote note: String, completion: (Task) -> Void) {
+    func update(_ task: Task, newName name: String, andNote note: String) {
         write {
             task.name = name
             task.note = note
-            completion(task)
         }
     }
         
@@ -74,18 +73,10 @@ class StorageManager {
     
     func done(_ task: Task) {
         write {
-            task.setValue(true, forKey: "isComplete")
-            task.setValue(Date.now, forKey: "date")
+            task.isComplete.toggle()
+            task.date = Date.now
         }
     }
-    
-    func unDone(_ task: Task) {
-        write {
-            task.setValue(false, forKey: "isComplete")
-            task.setValue(Date.now, forKey: "date")
-        }
-    }
-    
     
     // MARK: - write
     private func write(completion: () -> Void) {

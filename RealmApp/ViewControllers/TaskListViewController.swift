@@ -34,17 +34,6 @@ class TaskListViewController: UITableViewController {
         super.viewWillAppear(animated)
         tableView.reloadData()
     }
-    
-    // MARK: - @IBActions
-    @IBAction func sortingList(_ sender: UISegmentedControl) {
-        if sender.selectedSegmentIndex == 0 {
-            taskLists = taskLists.sorted(byKeyPath: "date", ascending: true)
-        } else {
-            taskLists = taskLists.sorted(byKeyPath: "name", ascending: true)
-        }
-        tableView.reloadData()
-    }
-    
 
     // MARK: - Table view data source
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -56,13 +45,15 @@ class TaskListViewController: UITableViewController {
         var content = cell.defaultContentConfiguration()
         let taskList = taskLists[indexPath.row]
         content.text = taskList.name
+        cell.accessoryType = .none
         switch taskList.getResultType() {
         case .isEmpty:
             content.secondaryText = "0"
         case .inWork(let count):
             content.secondaryText = "\(count)"
         case .allDone:
-            content.secondaryText = "✓"
+            //content.secondaryText = "✓"
+            cell.accessoryType = .checkmark
         }
         cell.contentConfiguration = content
         return cell
@@ -94,6 +85,15 @@ class TaskListViewController: UITableViewController {
         doneAction.backgroundColor = #colorLiteral(red: 0.3411764801, green: 0.6235294342, blue: 0.1686274558, alpha: 1)
         
         return UISwipeActionsConfiguration(actions: [doneAction, editAction, deleteAction])
+    }
+    
+    // MARK: - @IBActions
+    @IBAction func sortingList(_ sender: UISegmentedControl) {
+        taskLists = sender.selectedSegmentIndex == 0
+            ? taskLists.sorted(byKeyPath: "date", ascending: true)
+            : taskLists.sorted(byKeyPath: "name", ascending: true)
+        
+        tableView.reloadData()
     }
     
     // MARK: - Navigation
